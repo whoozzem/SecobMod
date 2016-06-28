@@ -2,7 +2,7 @@
 //
 // Purpose: combine ball -	can be held by the super physcannon and launched
 //							by the AR2's alt-fire
-//
+// 
 //=============================================================================//
 
 #include "cbase.h"
@@ -706,6 +706,9 @@ void CPropCombineBall::WhizSoundThink()
 	pPhysicsObject->GetPosition( &vecPosition, NULL );
 	pPhysicsObject->GetVelocity( &vecVelocity, NULL );
 	
+	//SecobMod__MiscFixes 
+	//if ( gpGlobals->maxClients == 1 )
+	// Multiplayer equivelent, loops through players and decides if it should go or not, like SP.
 	if ( gpGlobals->maxClients == 1 )
 	{
 		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
@@ -745,7 +748,11 @@ void CPropCombineBall::WhizSoundThink()
 		}
 	}
 
-	SetContextThink( &CPropCombineBall::WhizSoundThink, gpGlobals->curtime + 2.0f * TICK_INTERVAL, s_pWhizThinkContext );
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());  //Slightly different location due to OLD/NEW sdk code differences. Unsure if needed.
+	#else
+	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI	
 }
 
 //-----------------------------------------------------------------------------

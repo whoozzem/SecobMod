@@ -366,26 +366,50 @@ void CAI_PlayerAlly::DisplayDeathMessage( void )
 	if ( npc_ally_deathmessage.GetBool() == 0 )
 		return;
 
-	CBaseEntity *pPlayer = AI_GetSinglePlayer();
-
-	if ( pPlayer )	
-	{
-		UTIL_ShowMessage( GetDeathMessageText(), ToBasePlayer( pPlayer ) );
-		ToBasePlayer(pPlayer)->NotifySinglePlayerGameEnding();
-	}
-
-	CBaseEntity *pReload = CreatePlayerLoadSave( GetAbsOrigin(), 1.5f, 8.0f, 4.5f );
-
-	if ( pReload )
-	{
-		pReload->SetRenderColor( 0, 0, 0, 255 );
-
-		g_EventQueue.AddEvent( pReload, "Reload", 1.5f, pReload, pReload );
-	}
-
-	// clear any pending autosavedangerous
-	g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
-	g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+	#ifdef SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
+		for( int i = 1; i <= gpGlobals->maxClients; i++)
+		{
+			CBasePlayer* pPlayer = UTIL_PlayerByIndex( i );
+			if ( pPlayer )	
+			{
+				UTIL_ShowMessageAll( GetDeathMessageText());//, ToBasePlayer( pPlayer ) );
+				ToBasePlayer(pPlayer)->NotifySinglePlayerGameEnding();
+			}
+		
+			CBaseEntity *pReload = CreatePlayerLoadSave( GetAbsOrigin(), 1.5f, 8.0f, 4.5f );
+		
+			if ( pReload )
+			{
+				pReload->SetRenderColor( 0, 0, 0, 255 );
+		
+				g_EventQueue.AddEvent( pReload, "Reload", 1.5f, pReload, pReload );
+			}
+		
+			// clear any pending autosavedangerous
+			g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
+			g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+		}	
+	#else
+			CBaseEntity *pPlayer = AI_GetSinglePlayer();
+			if ( pPlayer )	
+			{
+				UTIL_ShowMessage( GetDeathMessageText(), ToBasePlayer( pPlayer ) );
+				ToBasePlayer(pPlayer)->NotifySinglePlayerGameEnding();
+			}
+		
+			CBaseEntity *pReload = CreatePlayerLoadSave( GetAbsOrigin(), 1.5f, 8.0f, 4.5f );
+		
+			if ( pReload )
+			{
+				pReload->SetRenderColor( 0, 0, 0, 255 );
+		
+				g_EventQueue.AddEvent( pReload, "Reload", 1.5f, pReload, pReload );
+			}
+		
+			// clear any pending autosavedangerous
+			g_ServerGameDLL.m_fAutoSaveDangerousTime = 0.0f;
+			g_ServerGameDLL.m_fAutoSaveDangerousMinHealthToCommit = 0.0f;
+	#endif //SecobMod__MULTIPLAYER_LEVEL_TRANSITIONS
 }
 
 //-----------------------------------------------------------------------------

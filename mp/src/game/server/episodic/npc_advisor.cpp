@@ -30,7 +30,8 @@
 // #include "mathlib/noise.h"
 
 // this file contains the definitions for the message ID constants (eg ADVISOR_MSG_START_BEAM etc)
-#include "npc_advisor_shared.h"
+//Secobmod
+#include "../../npc_advisor_shared.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -2049,3 +2050,4 @@ AI_BEGIN_CUSTOM_NPC( npc_advisor, CNPC_Advisor )
 
 AI_END_CUSTOM_NPC()
 #endif
+

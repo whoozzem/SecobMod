@@ -57,6 +57,11 @@ acttable_t	CWeaponCrowbar::m_acttable[] =
 	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,	false },
 	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_MELEE,			false },
 	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_MELEE,					false },
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI	
+	{ ACT_MELEE_ATTACK1,	ACT_MELEE_ATTACK_SWING, true }, 
+	{ ACT_IDLE,				ACT_IDLE_ANGRY_MELEE,	false }, 
+	{ ACT_IDLE_ANGRY,		ACT_IDLE_ANGRY_MELEE,	false }, 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 };
 
 IMPLEMENT_ACTTABLE(CWeaponCrowbar);
@@ -111,6 +116,23 @@ void CWeaponCrowbar::HandleAnimEventMeleeHit( animevent_t *pEvent, CBaseCombatCh
 	Vector vecDirection;
 	AngleVectors( GetAbsAngles(), &vecDirection );
 
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	CBaseEntity *pEnemy = pOperator->MyNPCPointer() ? pOperator->MyNPCPointer()->GetEnemy() : NULL;
+	if ( pEnemy )
+	{
+		Vector vecDelta;
+		VectorSubtract( pEnemy->WorldSpaceCenter(), pOperator->Weapon_ShootPosition(), vecDelta );
+		VectorNormalize( vecDelta );
+		
+		Vector2D vecDelta2D = vecDelta.AsVector2D();
+		Vector2DNormalize( vecDelta2D );
+		if ( DotProduct2D( vecDelta2D, vecDirection.AsVector2D() ) > 0.8f )
+		{
+			vecDirection = vecDelta;
+		}
+	}
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	
 	Vector vecEnd;
 	VectorMA( pOperator->Weapon_ShootPosition(), 50, vecDirection, vecEnd );
 	CBaseEntity *pHurt = pOperator->CheckTraceHullAttack( pOperator->Weapon_ShootPosition(), vecEnd, 

@@ -173,7 +173,11 @@ void CClassMenu::OnCommand( const char *command )
 		// the new class right away
 		if ( hud_classautokill.GetBool() )
 		{
-            engine->ClientCmd( "kill" );
+            #ifdef SecobMod__MiscFixes
+				//Too many crashes linked to the following command.
+			#else
+            	engine->ClientCmd( "kill" );
+			#endif //SecobMod__MiscFixes
 		}
 #endif // !CSTRIKE_DLL && !TF_CLIENT_DLL
 	}

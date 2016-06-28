@@ -596,3 +596,4 @@ void CTriggerSoundscape::PlayerUpdateThink()
 		}
 	}
 }
+

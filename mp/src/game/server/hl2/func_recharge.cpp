@@ -19,6 +19,10 @@
 #include "engine/IEngineSound.h"
 #include "in_buttons.h"
 
+#ifdef SecobMod__USE_PLAYERCLASSES
+#include "hl2mp_player.h"
+#endif //SecobMod__USE_PLAYERCLASSES
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -593,7 +597,11 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	if ( !pActivator || !pActivator->IsPlayer() )
 		return;
 
-	CBasePlayer *pPlayer = static_cast<CBasePlayer *>(pActivator);
+	#ifdef SecobMod__USE_PLAYERCLASSES
+		CHL2MP_Player *pPlayer = static_cast<CHL2MP_Player *>(pActivator);
+	#else
+		CBasePlayer *pPlayer = static_cast<CBasePlayer *>(pActivator);
+	#endif //SecobMod__USE_PLAYERCLASSES
 
 	// Reset to a state of continuous use.
 	m_iCaps = FCAP_CONTINUOUS_USE;
@@ -643,7 +651,11 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	}
 
 	// Get our maximum armor value
-	int nMaxArmor = 100;
+	#ifdef SecobMod__USE_PLAYERCLASSES
+	 	int nMaxArmor = pPlayer->GetMaxArmorValue();
+	#else
+	 	int nMaxArmor = 100;
+	#endif //SecobMod__USE_PLAYERCLASSES
 	if ( HasSpawnFlags(	SF_CITADEL_RECHARGER ) )
 	{
 		nMaxArmor = sk_suitcharger_citadel_maxarmor.GetInt();

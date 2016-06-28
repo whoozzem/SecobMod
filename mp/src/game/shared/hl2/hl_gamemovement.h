@@ -43,6 +43,10 @@ public:
 	virtual int GetCheckInterval( IntervalType_t type );
 	virtual void	SetGroundEntity( trace_t *pm );
 	virtual bool CanAccelerate( void );
+	
+	#ifdef SecobMod__USE_CSS_LADDERS
+		virtual unsigned int PlayerSolidMask( bool brushOnly = false );
+	#endif //SecobMod__USE_CSS_LADDERS
 
 private:
 

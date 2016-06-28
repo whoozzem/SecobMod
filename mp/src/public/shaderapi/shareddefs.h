@@ -109,3 +109,4 @@ enum VertexTextureSampler_t
 
 
 #endif // SHADERAPI_SHAREDDEFS_H
+

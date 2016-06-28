@@ -351,7 +351,12 @@ void CAI_PlaneSolver::GenerateObstacleNpcs( const AILocalMoveGoal_t &goal, float
 			}
 		}
 
-		CBaseEntity *pPlayer = UTIL_PlayerByIndex( 1 );
+		#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+			CBaseEntity *pPlayer = UTIL_GetNearestPlayer(m_pNpc->GetAbsOrigin()); 
+		#else
+			CBaseEntity *pPlayer = UTIL_PlayerByIndex( 1 );
+		#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+		
 		if ( pPlayer )
 		{
 			Vector mins, maxs;

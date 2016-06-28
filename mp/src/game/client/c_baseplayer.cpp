@@ -71,6 +71,10 @@ int g_nKillCamTarget2 = 0;
 
 extern ConVar mp_forcecamera; // in gamevars_shared.h
 
+#ifdef SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS
+	extern int m_iClientClass;
+#endif //SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS
+
 #define FLASHLIGHT_DISTANCE		1000
 #define MAX_VGUI_INPUT_MODE_SPEED 30
 #define MAX_VGUI_INPUT_MODE_SPEED_SQ (MAX_VGUI_INPUT_MODE_SPEED*MAX_VGUI_INPUT_MODE_SPEED)
@@ -286,9 +290,13 @@ END_RECV_TABLE()
 		RecvPropInt		(RECVINFO(m_iBonusChallenge)),
 
 		RecvPropFloat	(RECVINFO(m_flMaxspeed)),
+		
+		#ifdef SecobMod__USE_PLAYERCLASSES
+			RecvPropFloat	(RECVINFO(m_iJumpHeight)),
+		#endif //SecobMod__USE_PLAYERCLASSES
+		
 		RecvPropInt		(RECVINFO(m_fFlags)),
-
-
+		
 		RecvPropInt		(RECVINFO(m_iObserverMode), 0, RecvProxy_ObserverMode ),
 		RecvPropEHandle	(RECVINFO(m_hObserverTarget), RecvProxy_ObserverTarget ),
 		RecvPropArray	( RecvPropEHandle( RECVINFO( m_hViewModel[0] ) ), m_hViewModel ),
@@ -3026,3 +3034,23 @@ void CC_DumpClientSoundscapeData( const CCommand& args )
 	Msg("End dump.\n");
 }
 static ConCommand soundscape_dumpclient("soundscape_dumpclient", CC_DumpClientSoundscapeData, "Dumps the client's soundscape data.\n", FCVAR_CHEAT);
+
+#ifdef SecobMod__USE_PLAYERCLASSES
+	float C_BasePlayer::GetJumpHeight()
+	{
+	        return m_iJumpHeight;
+	}
+#endif //SecobMod__USE_PLAYERCLASSES
+
+
+#ifdef SecobMod__ALLOW_PLAYER_MODELS_IN_VEHICLES
+	//SecobMod__Information: Tony Sergi has said on the hl2coders list that third person models need to invalidate their bone cache, so we do that here.
+	const Vector &C_BasePlayer::GetRenderOrigin( void )
+	{
+		if (IsInAVehicle())
+		{
+		InvalidateBoneCache();
+		}
+	 return BaseClass::GetRenderOrigin();
+	}
+#endif //SecobMod__ALLOW_PLAYER_MODELS_IN_VEHICLES

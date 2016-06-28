@@ -24,7 +24,12 @@ void Pickup_ForcePlayerToDropThisObject( CBaseEntity *pTarget )
 
 	if ( pPhysics->GetGameFlags() & FVPHYSICS_PLAYER_HELD )
 	{
+		#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(pTarget->GetAbsOrigin()); 
+	#else
 		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+
 		pPlayer->ForceDropOfCarriedPhysObjects( pTarget );
 	}
 }

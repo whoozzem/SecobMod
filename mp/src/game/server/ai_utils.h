@@ -23,10 +23,14 @@
 
 inline CBasePlayer *AI_GetSinglePlayer()
 {
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	//Do nothing here. 
+	#else
 	if ( gpGlobals->maxClients > 1 )
 	{
 		return NULL;
 	}
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	
 	return UTIL_GetLocalPlayer();
 }

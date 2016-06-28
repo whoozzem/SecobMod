@@ -42,6 +42,11 @@
 #include "NavProgress.h"
 #include "commentary_modelviewer.h"
 
+#ifdef SecobMod__USE_PLAYERCLASSES
+  // Sub dialogs
+  # include "classmenu.h"
+#endif //SecobMod__USE_PLAYERCLASSES
+
 // our definition
 #include "baseviewport.h"
 #include <filesystem.h>
@@ -100,6 +105,31 @@ CON_COMMAND( hidepanel, "Hides a viewport panel <name>" )
 		
 	 gViewPortInterface->ShowPanel( args[ 1 ], false );
 }
+
+#ifdef SecobMod__USE_PLAYERCLASSES
+	 CON_COMMAND( SSPlayerClassesBGChecked, "Makes sure the player class menu isn't displayed on the background maps." )
+	{
+		if ( !gViewPortInterface )
+			return;
+	
+	 if ( !engine->IsLevelMainMenuBackground() )
+		{		
+		return;
+		}
+	 else
+		{
+		engine->ClientCmd( "ss_classes_default" );
+	    }
+	}
+	
+	 CON_COMMAND( chooseclass, "Opens a menu for class choose" )
+	 {
+	 	if ( !gViewPortInterface )
+	 		return;
+	 
+	 	gViewPortInterface->ShowPanel( "class", true );
+	 }
+#endif //SecobMod__USE_PLAYERCLASSES
 
 /* global helper functions
 
@@ -243,6 +273,9 @@ void CBaseViewport::CreateDefaultPanels( void )
 	AddNewPanel( CreatePanelByName( PANEL_SPECMENU ), "PANEL_SPECMENU" );
 	AddNewPanel( CreatePanelByName( PANEL_NAV_PROGRESS ), "PANEL_NAV_PROGRESS" );
 #endif // !TF_CLIENT_DLL
+#ifdef SecobMod__USE_PLAYERCLASSES
+	AddNewPanel( CreatePanelByName( PANEL_CLASS ), "PANEL_CLASS" );
+#endif //SecobMod__USE_PLAYERCLASSES
 #endif // !_XBOX
 }
 
@@ -279,6 +312,12 @@ IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 		newpanel = new CMapOverview( this );
 	}
 	*/
+#ifdef SecobMod__USE_PLAYERCLASSES
+	else if ( Q_strcmp(PANEL_CLASS, szPanelName) == 0 )
+	{
+		newpanel = new CClassMenu( this );
+	}
+#endif //SecobMod__USE_PLAYERCLASSES
 	else if ( Q_strcmp(PANEL_TEAM, szPanelName) == 0 )
 	{
 		newpanel = new CTeamMenu( this );

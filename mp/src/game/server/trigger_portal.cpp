@@ -275,7 +275,11 @@ void CTriggerPortal::DisableForIncomingEntity( CBaseEntity *pEntity )
 	// Start thinking, and remove the other as soon as it's not touching me.
 	// Needs to be done in addition to EndTouch, because entities may move fast
 	// enough through the portal to come out not touching the other portal.
-	SetContextThink( DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#ifdef SecobMod__ENABLE_PORTAL_ITEMS
+		SetContextThink( &CTriggerPortal::DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#else
+		SetContextThink( DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#endif //SecobMod__ENABLE_PORTAL_ITEMS
 }
 
 //-----------------------------------------------------------------------------
@@ -298,8 +302,11 @@ void CTriggerPortal::DisabledThink( void )
 			m_hDisabledForEntities.Remove(i);
 		}
 	}
-
-	SetContextThink( DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#ifdef SecobMod__ENABLE_PORTAL_ITEMS
+		SetContextThink( &CTriggerPortal::DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#else
+		SetContextThink( DisabledThink, gpGlobals->curtime + 0.1, TRIGGER_DISABLED_THINK );
+	#endif //SecobMod__ENABLE_PORTAL_ITEMS
 }
 
 //-----------------------------------------------------------------------------

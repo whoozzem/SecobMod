@@ -215,6 +215,26 @@ bool CBasePlayer::UsingStandardWeaponsInVehicle( void )
 	int nRole = pVehicle->GetPassengerRole( this );
 	bool bUsingStandardWeapons = pVehicle->IsPassengerUsingStandardWeapons( nRole );
 
+	#ifdef SecobMod__ENABLE_FAKE_PASSENGER_SEATS
+	//SecobMod__Information: Get the name of our vehicles entity. If it's our passenger seat, then give the player the ability to use their weapons in-car.
+	// You may be wondering why we don't just set IsPassengerUsingStandardWeapons to true in our passenger seat code, we did try this and discovered that 
+	//even if you give your player a different nrole (eg vehicle_passenger) it still says somewhere in the code (which we couldn't find) that your nrole is
+	//that of driver if you're the sole occupant so always returns false for using standard weapons. As such this code works perfectly for getting round the problem.
+	CBaseEntity *pVehicleEnt = pVehicle->GetVehicleEnt();
+
+	if( FClassnameIs( pVehicleEnt, "prop_vehicle_ss_passengerseat" ) ||
+	  ( FClassnameIs( pVehicleEnt, "C_PropVehicleSSPassengerSeat" )  ||
+	  ( FClassnameIs( pVehicleEnt, "class C_PropVehicleSSPassengerSeat" )))
+	  )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	#endif //SecobMod__ENABLE_FAKE_PASSENGER_SEATS
+	
 	// Fall through and check weapons, etc. if we're using them 
 	if (!bUsingStandardWeapons )
 		return false;

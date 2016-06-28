@@ -42,7 +42,9 @@ private:
 	float	m_nCalcFrame;	// Frame the last calculation was made at
 };
 
-void RecvProxy_ScaleX( const CRecvProxyData *pData, void *pStruct, void *pOut )
+//SecobMod__MiscFixes - The following functions and clientclass staements were originally X,Y,Z but due to conflicts with c_prop_coreball these are now Xx,Yy and Zz.
+
+void RecvProxy_ScaleXx( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
 	C_PropScalable *pCoreData = (C_PropScalable *) pStruct;
 
@@ -54,7 +56,7 @@ void RecvProxy_ScaleX( const CRecvProxyData *pData, void *pStruct, void *pOut )
 	}
 }
 
-void RecvProxy_ScaleY( const CRecvProxyData *pData, void *pStruct, void *pOut )
+void RecvProxy_ScaleYy( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
 	C_PropScalable *pCoreData = (C_PropScalable *) pStruct;
 
@@ -66,7 +68,7 @@ void RecvProxy_ScaleY( const CRecvProxyData *pData, void *pStruct, void *pOut )
 	}
 }
 
-void RecvProxy_ScaleZ( const CRecvProxyData *pData, void *pStruct, void *pOut )
+void RecvProxy_ScaleZz( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
 	C_PropScalable *pCoreData = (C_PropScalable *) pStruct;
 

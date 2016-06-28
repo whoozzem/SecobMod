@@ -8,7 +8,8 @@
 
 #include "cbase.h"
 // this file contains the definitions for the message ID constants (eg ADVISOR_MSG_START_BEAM etc)
-#include "npc_advisor_shared.h"
+// SecobMod ??
+#include "../../shared/episodic/npc_advisor_shared.h"
 
 #if NPC_ADVISOR_HAS_BEHAVIOR
 

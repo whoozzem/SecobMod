@@ -25,7 +25,7 @@
 #include "movevars_shared.h"
 #include "IEffects.h"
 #include "props.h"
-#include "physics_npc_solver.h"
+#include "physics_npc_solver.h"]
 #include "hl2_player.h"
 #include "hl2_gamerules.h"
 
@@ -34,6 +34,10 @@
 #include "grenade_frag.h"
 
 #include "ai_interactions.h"
+
+//SecobMod__MiscFixes: Here we include the hl2mp gamerules so that calls to darkness mode work.
+#include "hl2mp_gamerules.h"
+//#include "hl2mp_player.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -411,7 +415,9 @@ void CNPC_Zombine::GatherGrenadeConditions( void )
 	if ( m_ActBusyBehavior.IsActive() )
 		return;
 
-	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+	//Secobmod FixMe
+	//CBasePlayer *pPlayer = AI_GetSinglePlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
 
 	if ( pPlayer && pPlayer->FVisible( this ) )
 	{
@@ -610,11 +616,13 @@ bool CNPC_Zombine::AllowedToSprint( void )
 
 	int iChance = SPRINT_CHANCE_VALUE;
 
+	//Secobmod FixMe ?? also changed to HL2MPRules
 	CHL2_Player *pPlayer = dynamic_cast <CHL2_Player*> ( AI_GetSinglePlayer() );
+	//CHL2MP_Player *pPlayer = dynamic_cast<CHL2MP_Player *>( UTIL_GetNearestPlayer(GetAbsOrigin() );
 
 	if ( pPlayer )
 	{
-		if ( HL2GameRules()->IsAlyxInDarknessMode() && pPlayer->FlashlightIsOn() == false )
+		if ( HL2MPRules()->IsAlyxInDarknessMode() && pPlayer->FlashlightIsOn() == false )
 		{
 			iChance = SPRINT_CHANCE_VALUE_DARKNESS;
 		}
@@ -1027,6 +1035,7 @@ AI_BEGIN_CUSTOM_NPC( npc_zombine, CNPC_Zombine )
 	)
 
 AI_END_CUSTOM_NPC()
+
 
 
 

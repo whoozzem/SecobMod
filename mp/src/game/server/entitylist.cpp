@@ -521,7 +521,11 @@ CBaseEntity *CGlobalEntityList::FindEntityProcedural( const char *szName, CBaseE
 		//
 		if ( FStrEq( pName, "player" ) )
 		{
+		#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+			return (CBaseEntity *)UTIL_GetLocalPlayer(); 
+		#else
 			return (CBaseEntity *)UTIL_PlayerByIndex( 1 );
+		#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 		}
 		else if ( FStrEq( pName, "pvsplayer" ) )
 		{
@@ -537,7 +541,11 @@ CBaseEntity *CGlobalEntityList::FindEntityProcedural( const char *szName, CBaseE
 			else
 			{
 				// FIXME: error condition?
+			#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+				return (CBaseEntity *)UTIL_GetLocalPlayer(); 
+			#else
 				return (CBaseEntity *)UTIL_PlayerByIndex( 1 );
+			#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 			}
 
 		}
@@ -551,7 +559,11 @@ CBaseEntity *CGlobalEntityList::FindEntityProcedural( const char *szName, CBaseE
 		}
 		else if ( FStrEq( pName, "picker" ) )
 		{
+		#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+			return FindPickerEntity( UTIL_GetLocalPlayer() ); 
+		#else
 			return FindPickerEntity( UTIL_PlayerByIndex(1) );
+		#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 		}
 		else if ( FStrEq( pName, "self" ) )
 		{

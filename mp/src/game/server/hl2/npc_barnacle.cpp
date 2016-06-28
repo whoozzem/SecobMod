@@ -963,6 +963,36 @@ void CNPC_Barnacle::UpdatePlayerConstraint( void )
 	m_bPlayerWasStanding = bStanding;
 }
 
+#ifdef SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS
+//-----------------------------------------------------------------------------
+// Purpose: Lift the prey stuck to our tongue up towards our mouth
+//-----------------------------------------------------------------------------
+void CNPC_Barnacle::LiftPlayer( float flPBiteZOffset )
+{
+	// Add an additional height for the player to avoid view clipping
+	flPBiteZOffset += 25.0;
+
+	// Play a scream when we're almost within bite range
+	PlayLiftingScream( flPBiteZOffset );
+
+	// Update player constraint.
+	UpdatePlayerConstraint();
+
+	// Figure out when the prey has reached our bite range use eye position to avoid
+	// clipping into the barnacle body
+	if ( GetAbsOrigin().z - GetEnemy()->EyePosition().z < flPBiteZOffset)
+	{
+		m_bLiftingPrey = false;
+	
+		// Start the bite animation. The anim event in it will finish the job.
+		SetActivity( (Activity)ACT_BARNACLE_BITE_HUMAN );
+	}
+	else
+	{
+		PullEnemyTorwardsMouth( true );
+	}
+}
+#else
 //-----------------------------------------------------------------------------
 // Purpose: Lift the prey stuck to our tongue up towards our mouth
 //-----------------------------------------------------------------------------
@@ -991,7 +1021,7 @@ void CNPC_Barnacle::LiftPlayer( float flBiteZOffset )
 		PullEnemyTorwardsMouth( true );
 	}
 }
-
+#endif //SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS
 
 //-----------------------------------------------------------------------------
 // Purpose: Lift the prey stuck to our tongue up towards our mouth
@@ -1026,7 +1056,6 @@ void CNPC_Barnacle::LiftNPC( float flBiteZOffset )
 		PullEnemyTorwardsMouth( true );
 	}
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Lift the prey stuck to our tongue up towards our mouth
@@ -1218,7 +1247,11 @@ void CNPC_Barnacle::LiftPrey( void )
 	}
 
 	// Height from the barnacle's origin to the point at which it bites
-	float flBiteZOffset = 60.0;
+	#ifdef SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS
+		float flBiteZOffset = 10.0;
+	#else
+		float flBiteZOffset = 60.0;
+    #endif //SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS
 
 	if ( IsEnemyAPlayer() )
 	{
@@ -1629,7 +1662,16 @@ void CNPC_Barnacle::BitePrey( void )
 	}
 	else
 	{
-		nDamage = BARNACLE_BITE_DAMAGE_TO_PLAYER; 
+		#ifdef SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS
+			EmitSound( "NPC_Barnacle.Digest" );
+			pVictim->AddEffects( EF_NODRAW );
+			iDamageType |= DMG_LASTGENERICFLAG;
+			nDamage = 5000; //SecobMod__Information: Make barnacles really deadly!//pVictim->m_iHealth; 
+			EmitSound( "NPC_Barnacle.Digest" );
+			SpawnDeathGibs();
+		#else	
+			nDamage = BARNACLE_BITE_DAMAGE_TO_PLAYER; 
+		#endif //SecobMod__BARNACLES_CAN_SWALLOW_PLAYERS	
 	}
 
 	if ( m_hRagdoll )

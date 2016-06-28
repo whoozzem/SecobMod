@@ -40,6 +40,11 @@ public:
 
 	void Reset()
 	{
+		
+		#ifdef SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		chatbubble = 0;
+		#endif //SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		
 		command_number = 0;
 		tick_count = 0;
 		viewangles.Init();
@@ -67,6 +72,10 @@ public:
 	{
 		if ( this == &src )
 			return *this;
+		
+		#ifdef SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		chatbubble          = src.chatbubble;
+		#endif //SecobMod__MULTIPLAYER_CHAT_BUBBLES
 
 		command_number		= src.command_number;
 		tick_count			= src.tick_count;
@@ -117,6 +126,11 @@ public:
 		CRC32_ProcessBuffer( &crc, &random_seed, sizeof( random_seed ) );
 		CRC32_ProcessBuffer( &crc, &mousedx, sizeof( mousedx ) );
 		CRC32_ProcessBuffer( &crc, &mousedy, sizeof( mousedy ) );
+		
+		#ifdef SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		CRC32_ProcessBuffer( &crc, &chatbubble, sizeof ( chatbubble ) );
+		#endif //SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		
 		CRC32_Final( &crc );
 
 		return crc;
@@ -163,6 +177,10 @@ public:
 
 	short	mousedx;		// mouse accum in x from create move
 	short	mousedy;		// mouse accum in y from create move
+	
+	#ifdef SecobMod__MULTIPLAYER_CHAT_BUBBLES
+	short	chatbubble;
+	#endif //SecobMod__MULTIPLAYER_CHAT_BUBBLES
 
 	// Client only, tracks whether we've predicted this command at least once
 	bool	hasbeenpredicted;

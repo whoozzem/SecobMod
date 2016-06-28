@@ -24,6 +24,10 @@ public:
 	virtual void	StartLagCompensation( CBasePlayer *player, CUserCmd *cmd ) = 0;
 	virtual void	FinishLagCompensation( CBasePlayer *player ) = 0;
 	virtual bool	IsCurrentlyDoingLagCompensation() const = 0;
+	
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		virtual void	RemoveNpcData(int index) = 0; 
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 };
 
 extern ILagCompensationManager *lagcompensation;

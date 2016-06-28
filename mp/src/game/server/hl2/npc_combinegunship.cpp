@@ -2372,8 +2372,13 @@ void CNPC_CombineGunship::UpdateRotorSoundPitch( int iPitch )
 	// Apply the pitch to both sounds. 
 	controller.SoundChangePitch( m_pAirExhaustSound, iPitch, 0.1 );
 
-	// FIXME: Doesn't work in multiplayer
-	CBaseEntity *pPlayer = UTIL_PlayerByIndex(1);
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CBaseEntity *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+	#else
+		// FIXME: Doesn't work in multiplayer
+		CBaseEntity *pPlayer = UTIL_PlayerByIndex(1);
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	
 	if (pPlayer)
 	{
 		Vector pos;

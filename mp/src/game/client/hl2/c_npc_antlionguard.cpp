@@ -12,8 +12,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 // When enabled, add code to have the antlion bleed profusely as it is badly injured.
 #define ANTLIONGUARD_BLOOD_EFFECTS 2
 #endif
@@ -37,7 +37,8 @@ private:
 	bool m_bInCavern;
 	dlight_t *m_dlight;
 
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 	unsigned char m_iBleedingLevel; //< the version coming from the server
 	unsigned char m_iPerformingBleedingLevel; //< the version we're currently performing (for comparison to one above)
 	CNewParticleEffect *m_pBleedingFX;
@@ -82,7 +83,8 @@ void C_NPC_AntlionGuard::OnDataChanged( DataUpdateType_t type )
 	}
 
 
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 	if (m_iBleedingLevel != m_iPerformingBleedingLevel)
 	{
 		UpdateBleedingPerformance();
@@ -91,7 +93,8 @@ void C_NPC_AntlionGuard::OnDataChanged( DataUpdateType_t type )
 
 }
 
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 void C_NPC_AntlionGuard::UpdateBleedingPerformance()

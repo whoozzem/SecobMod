@@ -113,7 +113,40 @@ $Project "Client (HL2MP)"
 			$File	"hl2\shieldproxy.cpp"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
 		}
-
+		
+		$Folder	"seco"
+		{
+		$File	"secobmod\c_vehicle_passenger_seat.cpp"
+		$File	"secobmod\c_weapon_portalgun.cpp"
+		$File	"episodic\flesh_internal_material_proxy.cpp"
+		$File	"game_controls\classmenu.cpp"
+		$File	"$SRCDIR\game\shared\secobmod\weapon_pg.cpp"
+		$File	"$SRCDIR\game\shared\secobmod\weapon_hands.cpp"
+		$File	"$SRCDIR\game\shared\secobmod\weapon_hands.h"
+		$File	"$SRCDIR\game\shared\hl2\survival_gamerules.cpp"
+		$File	"$SRCDIR\game\shared\secobmod\secobmod_information.h"
+		$File	"$SRCDIR\game\shared\secobmod\secobmod_shareddefs.h"
+		}
+		
+		$Folder "Shader Editor" [$WIN32]
+		{
+			$Folder	"Header Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ISEdit_ModelRender.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\IVShaderEditor.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.h"
+			}
+ 
+			$Folder	"Implementation Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.cpp"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.cpp"
+				$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.cpp"
+			}
+		}
+		
 		$Folder	"HL2MP"
 		{
 			$File	"hl2mp\c_hl2mp_player.cpp"

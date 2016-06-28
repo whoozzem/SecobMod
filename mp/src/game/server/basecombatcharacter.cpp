@@ -43,6 +43,9 @@
 #include "NextBot/NextBotManager.h"
 #endif
 
+//SecobMod__MiscFixes: Here we include the hl2mp gamerules so that calls to darkness mode work. We also change any calls to HL2GameRules to HL2MPRules as required for darkness mode to work.
+#include "hl2mp_gamerules.h"
+
 #ifdef HL2_DLL
 #include "weapon_physcannon.h"
 #include "hl2_gamerules.h"
@@ -766,6 +769,11 @@ CBaseCombatCharacter::~CBaseCombatCharacter( void )
 void CBaseCombatCharacter::Spawn( void )
 {
 	BaseClass::Spawn();
+	
+	//SecobMod__ChangeME! You may not want all AI having the glow effect but we have this here to prove it works!
+	#ifdef SecobMod__HAS_L4D_STYLE_GLOW_EFFECTS
+	AddGlowEffect();
+	#endif //SecobMod__HAS_L4D_STYLE_GLOW_EFFECTS
 	
 	SetBlocksLOS( false );
 	m_aliveTimer.Start();
@@ -1531,7 +1539,7 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 
 #ifdef HL2_EPISODIC
 	// Burning corpses are server-side in episodic, if we're in darkness mode
-	if ( IsOnFire() && HL2GameRules()->IsAlyxInDarknessMode() )
+	if ( IsOnFire() && HL2MPRules()->IsAlyxInDarknessMode() )
 	{
 		CBaseEntity *pRagdoll = CreateServerRagdoll( this, m_nForceBone, newinfo, COLLISION_GROUP_DEBRIS );
 		FixupBurningServerRagdoll( pRagdoll );
@@ -1544,7 +1552,7 @@ bool CBaseCombatCharacter::BecomeRagdoll( const CTakeDamageInfo &info, const Vec
 
 	bool bMegaPhyscannonActive = false;
 #if !defined( HL2MP )
-	bMegaPhyscannonActive = HL2GameRules()->MegaPhyscannonActive();
+	bMegaPhyscannonActive = HL2MPRules()->MegaPhyscannonActive();
 #endif // !HL2MP
 
 	// Mega physgun requires everything to be a server-side ragdoll
@@ -1916,7 +1924,12 @@ void CBaseCombatCharacter::Weapon_Drop( CBaseCombatWeapon *pWeapon, const Vector
 			{
 				// Drop enough ammo to kill 2 of me.
 				// Figure out how much damage one piece of this type of ammo does to this type of enemy.
-				float flAmmoDamage = g_pGameRules->GetAmmoDamage( UTIL_PlayerByIndex(1), this, pWeapon->GetPrimaryAmmoType() );
+				#ifdef SecobMod__Enable_Fixed_Multiplayer_AI				
+float flAmmoDamage = g_pGameRules->GetAmmoDamage( UTIL_GetNearestPlayer(GetAbsOrigin()), this, pWeapon->GetPrimaryAmmoType() ); 
+#else
+float flAmmoDamage = g_pGameRules->GetAmmoDamage( UTIL_PlayerByIndex(1), this, pWeapon->GetPrimaryAmmoType() );							
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+
 				pWeapon->m_iClip1 = (GetMaxHealth() / flAmmoDamage) * 2;
 			}
 		}
@@ -3102,12 +3115,19 @@ void CBaseCombatCharacter::VPhysicsShadowCollision( int index, gamevcollisioneve
 	// which can occur owing to ordering issues it appears.
 	float flOtherAttackerTime = 0.0f;
 
-#if defined( HL2_DLL ) && !defined( HL2MP )
-	if ( HL2GameRules()->MegaPhyscannonActive() == true )
-	{
-		flOtherAttackerTime = 1.0f;
-	}
-#endif // HL2_DLL && !HL2MP
+#ifdef SecobMod__ALLOW_SUPER_GRAVITY_GUN
+		if ( HL2MPRules()->MegaPhyscannonActive() == true )
+		{
+			flOtherAttackerTime = 1.0f;
+		}
+	#else
+		#if defined( HL2_DLL ) && !defined( HL2MP )
+		if ( HL2MPRules()->MegaPhyscannonActive() == true )
+		{
+			flOtherAttackerTime = 1.0f;
+		}
+		#endif // HL2_DLL && !HL2MP
+	#endif // SecobMod__ALLOW_SUPER_GRAVITY_GUN
 
 	if ( this == pOther->HasPhysicsAttacker( flOtherAttackerTime ) )
 		return;
@@ -3274,7 +3294,11 @@ CBaseEntity *CBaseCombatCharacter::FindMissTarget( void )
 	CBaseEntity *pMissCandidates[ MAX_MISS_CANDIDATES ];
 	int numMissCandidates = 0;
 
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this); 
+	#else
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	CBaseEntity *pEnts[256];
 	Vector		radius( 100, 100, 100);
 	Vector		vecSource = GetAbsOrigin();

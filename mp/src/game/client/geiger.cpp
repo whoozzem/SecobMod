@@ -58,7 +58,11 @@ CHudGeiger::CHudGeiger( const char *pElementName ) :
 	SetParent( pParent );
 	m_flLastSoundTestTime = -9999;
 
-	SetHiddenBits( HIDEHUD_HEALTH );
+	#ifdef SecobMod__HAS_GEIGER_COUNTER_REGARDLESS_OF_SUIT
+		SetHiddenBits( HIDEHUD_PLAYERDEAD );
+	#else
+		SetHiddenBits( HIDEHUD_HEALTH );
+	#endif //SecobMod__HAS_GEIGER_COUNTER_REGARDLESS_OF_SUIT
 }
 
 void CHudGeiger::ApplySchemeSettings( IScheme *scheme )

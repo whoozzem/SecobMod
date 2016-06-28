@@ -28,6 +28,11 @@ public:
 
 public:
 
+	#ifdef SecobMod__IRONSIGHT_ENABLED
+		Vector m_expOffset;
+		QAngle m_expOriOffset;
+	#endif //SecobMod__IRONSIGHT_ENABLED
+
 	int m_iPlayerDamage;
 };
 

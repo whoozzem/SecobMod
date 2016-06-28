@@ -77,6 +77,10 @@ public:
 	virtual void			GameFrame( bool simulating ) OVERRIDE; // could be called multiple times before sending data to clients
 	virtual void			PreClientUpdate( bool simulating ) OVERRIDE; // called after all GameFrame() calls, before sending data to clients
 
+	#ifdef SecobMod__ENABLE_MAP_BRIEFINGS
+	void LoadMapBriefing(void);
+	#endif //SecobMod__ENABLE_MAP_BRIEFINGS
+	
 	virtual ServerClass*	GetAllServerClasses( void ) OVERRIDE;
 	virtual const char     *GetGameDescription( void ) OVERRIDE;
 	virtual void			CreateNetworkStringTables( void ) OVERRIDE;

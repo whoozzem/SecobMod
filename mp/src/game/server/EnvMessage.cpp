@@ -91,7 +91,9 @@ void CMessage::Precache( void )
 //-----------------------------------------------------------------------------
 void CMessage::InputShowMessage( inputdata_t &inputdata )
 {
-	CBaseEntity *pPlayer = NULL;
+	#ifndef SecobMod__SHOW_GAME_MESSAGES_TO_ALL
+		CBaseEntity *pPlayer = NULL;
+	#endif //SecobMod__SHOW_GAME_MESSAGES_TO_ALL
 
 	if ( m_spawnflags & SF_MESSAGE_ALL )
 	{
@@ -99,13 +101,21 @@ void CMessage::InputShowMessage( inputdata_t &inputdata )
 	}
 	else
 	{
+	#ifdef SecobMod__SHOW_GAME_MESSAGES_TO_ALL
+		UTIL_ShowMessageAll( STRING( m_iszMessage ) );
+		}
+	#else
 		if ( inputdata.pActivator && inputdata.pActivator->IsPlayer() )
 		{
 			pPlayer = inputdata.pActivator;
 		}
 		else
 		{
+			#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+			pPlayer = UTIL_GetLocalPlayer(); // just show it to the host, if there is one 
+			#else
 			pPlayer = (gpGlobals->maxClients > 1) ? NULL : UTIL_GetLocalPlayer();
+			#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 		}
 
 		if ( pPlayer && pPlayer->IsPlayer() )
@@ -113,6 +123,7 @@ void CMessage::InputShowMessage( inputdata_t &inputdata )
 			UTIL_ShowMessage( STRING( m_iszMessage ), ToBasePlayer( pPlayer ) );
 		}
 	}
+	#endif //SecobMod__SHOW_GAME_MESSAGES_TO_ALL
 
 	if ( m_sNoise != NULL_STRING )
 	{
@@ -219,12 +230,19 @@ void CCredits::RollOutroCredits()
 {
 	sv_unlockedchapters.SetValue( "15" );
 	
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-
-	CSingleUserRecipientFilter user( pPlayer );
-	user.MakeReliable();
-
-	UserMessageBegin( user, "CreditsMsg" );
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CRecipientFilter filter; 
+		filter.AddAllPlayers(); 
+		filter.MakeReliable(); 
+		UserMessageBegin( filter, "CreditsMsg" ); 
+	#else
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	
+		CSingleUserRecipientFilter user( pPlayer );
+		user.MakeReliable();
+	
+		UserMessageBegin( user, "CreditsMsg" );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 		WRITE_BYTE( 3 );
 	MessageEnd();
 }
@@ -241,20 +259,40 @@ void CCredits::InputRollOutroCredits( inputdata_t &inputdata )
 
 void CCredits::InputShowLogo( inputdata_t &inputdata )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-
-	CSingleUserRecipientFilter user( pPlayer );
-	user.MakeReliable();
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CRecipientFilter filter; 
+		filter.AddAllPlayers(); 
+		filter.MakeReliable(); 
+	
+		// Modification. Set to how old patched AI SDK had code. 
+		//CSingleUserRecipientFilter user( pPlayer ); 
+		//user.MakeReliable(); 
+	#else
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	
+		CSingleUserRecipientFilter user( pPlayer );
+		user.MakeReliable();
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 	if ( m_flLogoLength )
 	{
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		UserMessageBegin( filter, "LogoTimeMsg" ); 
+	#else
 		UserMessageBegin( user, "LogoTimeMsg" );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	
 			WRITE_FLOAT( m_flLogoLength );
 		MessageEnd();
 	}
 	else
 	{
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		UserMessageBegin( filter, "CreditsMsg" ); 
+	#else
 		UserMessageBegin( user, "CreditsMsg" );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	
 			WRITE_BYTE( 1 );
 		MessageEnd();
 	}
@@ -267,12 +305,21 @@ void CCredits::InputSetLogoLength( inputdata_t &inputdata )
 
 void CCredits::InputRollCredits( inputdata_t &inputdata )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-
-	CSingleUserRecipientFilter user( pPlayer );
-	user.MakeReliable();
-
-	UserMessageBegin( user, "CreditsMsg" );
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		CRecipientFilter filter; 
+		filter.AddAllPlayers(); 
+		filter.MakeReliable(); 
+	
+		UserMessageBegin( filter, "CreditsMsg" ); 
+		WRITE_BYTE( 2 ); // Modification: Added from old patched AI SDK. 
+	#else
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	
+		CSingleUserRecipientFilter user( pPlayer );
+		user.MakeReliable();
+	
+		UserMessageBegin( user, "CreditsMsg" );
 		WRITE_BYTE( 2 );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	MessageEnd();
 }

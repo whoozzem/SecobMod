@@ -22,6 +22,10 @@
 #include "tier0/icommandline.h"
 #include "c_world.h"
 
+#ifdef Grass_Clusters
+#include "ShaderEditor/Grass/CGrassCluster.h"
+#endif
+
 #include "tier0/valve_minmax_off.h"
 #include <algorithm>
 #include "tier0/valve_minmax_on.h"
@@ -1943,6 +1947,14 @@ void CDetailObjectSystem::UnserializeFastSprite( FastSpriteX4_t *pSpritex4, int 
 	pSpritex4->m_RGBColor[nSubField][3] = 255;
 
 	pSpritex4->m_pSpriteDefs[nSubField] = pSDef;
+	#ifdef Grass_Clusters
+	_grassClusterInfo clusterHint;
+	clusterHint.orig = pos;
+	clusterHint.color.Init( color[0], color[1], color[2], 1 );
+	clusterHint.uv_min = pSDef->m_TexLR;
+	clusterHint.uv_max = pSDef->m_TexUL;
+	CGrassClusterManager::GetInstance()->AddClusterHint( clusterHint );
+	#endif
 }
 
 

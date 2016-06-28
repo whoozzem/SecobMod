@@ -56,7 +56,12 @@ public:
 #ifndef CLIENT_DLL
 	virtual void Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 	void HandleAnimEventMeleeHit( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
-	int WeaponMeleeAttack1Condition( float flDot, float flDist );
+	
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		virtual int WeaponMeleeAttack1Condition( float flDot, float flDist ); 
+	#else
+		int WeaponMeleeAttack1Condition( float flDot, float flDist );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 #endif
 
 	CWeaponCrowbar( const CWeaponCrowbar & );

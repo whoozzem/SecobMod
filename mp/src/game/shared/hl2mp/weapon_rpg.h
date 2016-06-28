@@ -37,6 +37,10 @@ class CMissile : public CBaseCombatCharacter
 	DECLARE_CLASS( CMissile, CBaseCombatCharacter );
 
 public:
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		static const int EXPLOSION_RADIUS = 200; 
+		static const int EXPLOSION_DAMAGE = 200; 
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 	CMissile();
 	~CMissile();
 
@@ -70,6 +74,12 @@ public:
 
 	static CMissile *Create( const Vector &vecOrigin, const QAngle &vecAngles, edict_t *pentOwner );
 
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+		void CreateDangerSounds( bool bState ){ m_bCreateDangerSounds = bState; } 		
+		static void AddCustomDetonator( CBaseEntity *pEntity, float radius, float height = -1 );
+		static void RemoveCustomDetonator( CBaseEntity *pEntity );
+	#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+	
 protected:
 	virtual void DoExplosion();	
 	virtual void ComputeActualDotPosition( CLaserDot *pLaserDot, Vector *pActualDotPosition, float *pHomingSpeed );
@@ -85,9 +95,22 @@ protected:
 	float					m_flAugerTime;		// Amount of time to auger before blowing up anyway
 	float					m_flMarkDeadTime;
 	float					m_flDamage;
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	struct CustomDetonator_t 
+	{ 
+		EHANDLE hEntity; 
+		float radiusSq; 
+		float halfHeight; 
+	}; 
+
+	static CUtlVector<CustomDetonator_t> gm_CustomDetonators; 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 private:
 	float					m_flGracePeriodEndsAt;
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	bool					m_bCreateDangerSounds; 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 	DECLARE_DATADESC();
 };
@@ -124,6 +147,9 @@ public:
 
 	void	AimAtSpecificTarget( CBaseEntity *pTarget );
 	void	SetGuidanceHint( const char *pHintName );
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	void	APCSeekThink( void ); 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 	CAPCMissile			*m_pNext;
 
@@ -198,6 +224,13 @@ public:
 	int		GetMaxBurst() { return 1; }
 	float	GetMinRestTime() { return 4.0; }
 	float	GetMaxRestTime() { return 4.0; }
+#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	#ifndef CLIENT_DLL 
+	bool	WeaponLOSCondition( const Vector &ownerPos, const Vector &targetPos, bool bSetConditions ); 
+	int		WeaponRangeAttack1Condition( float flDot, float flDist ); 
+	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator ); 
+	#endif 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
 
 	void	StartGuiding( void );
 	void	StopGuiding( void );
@@ -214,7 +247,20 @@ public:
 	void	UpdateLaserPosition( Vector vecMuzzlePos = vec3_origin, Vector vecEndPos = vec3_origin );
 	Vector	GetLaserPosition( void );
 
+	#ifdef SecobMod__Enable_Fixed_Multiplayer_AI
+	#ifndef CLIENT_DLL 
+
 	// NPC RPG users cheat and directly set the laser pointer's origin
+	
+	int		CapabilitiesGet( void ) { return bits_CAP_WEAPON_RANGE_ATTACK1; } 
+#endif 
+	virtual const Vector& GetBulletSpread( void ) 
+	{ 
+		static Vector cone = VECTOR_CONE_3DEGREES; 
+		return cone; 
+	} 
+#endif //SecobMod__Enable_Fixed_Multiplayer_AI
+
 	void	UpdateNPCLaserPosition( const Vector &vecTarget );
 	void	SetNPCLaserPosition( const Vector &vecTarget );
 	const Vector &GetNPCLaserPosition( void );

@@ -27,4 +27,9 @@ float PhysCannonGetHeldObjectMass( CBaseCombatWeapon *pActiveWeapon, IPhysicsObj
 
 CBaseEntity *PhysCannonGetHeldEntity( CBaseCombatWeapon *pActiveWeapon );
 
+#ifdef SecobMod__ALLOW_SUPER_GRAVITY_GUN
+	CBaseEntity *GetPlayerHeldEntity( CBasePlayer *pPlayer );
+	bool PhysCannonAccountableForObject( CBaseCombatWeapon *pPhysCannon, CBaseEntity *pObject );
+#endif //SecobMod__ALLOW_SUPER_GRAVITY_GUN
+
 #endif // WEAPON_PHYSCANNON_H

@@ -433,6 +433,11 @@ void CPlayerMove::RunCommand ( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 		VPROF( "g_pGameMovement->ProcessMovement()" );
 		Assert( g_pGameMovement );
 		g_pGameMovement->ProcessMovement( player, g_pMoveData );
+		
+	#ifdef SecobMod__MULTIPLAYER_CHAT_BUBBLES
+		player->CheckChatBubble(ucmd);
+	#endif //SecobMod__MULTIPLAYER_CHAT_BUBBLES	
+	
 	}
 	else
 	{

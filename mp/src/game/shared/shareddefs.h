@@ -121,8 +121,9 @@ public:
 
 #define WEAPON_NOCLIP			-1	// clip sizes set to this tell the weapon it doesn't use a clip
 
-#define	MAX_AMMO_TYPES	32		// ???
-#define MAX_AMMO_SLOTS  32		// not really slots
+//Secobmod
+#define	MAX_AMMO_TYPES	128		// ???
+#define MAX_AMMO_SLOTS  128		// not really slots
 
 #define HUD_PRINTNOTIFY		1
 #define HUD_PRINTCONSOLE	2
@@ -541,11 +542,12 @@ enum
 	BLOOD_COLOR_GREEN,
 	BLOOD_COLOR_MECH,
 
-#if defined( HL2_EPISODIC )
+//SecobMod__IFDEF_Fixes
+//#ifdef HL2_EPISODIC
 	BLOOD_COLOR_ANTLION,		// FIXME: Move to Base HL2
 	BLOOD_COLOR_ZOMBIE,			// FIXME: Move to Base HL2
 	BLOOD_COLOR_ANTLION_WORKER,
-#endif // HL2_EPISODIC
+//#endif // HL2_EPISODIC
 };
 
 //-----------------------------------------------------------------------------
@@ -950,5 +952,8 @@ enum
 	MAX_VISION_MODES
 };
 #endif // TF_DLL || TF_CLIENT_DLL
+
+//SecobMod__Information: Here we add in the Source Engine Co-Operative Base Mod shared definitions file.
+#include "./secobmod/secobmod_shareddefs.h"
 
 #endif // SHAREDDEFS_H

@@ -134,13 +134,14 @@ CTextWindow::~CTextWindow()
 
 void CTextWindow::Reset( void )
 {
+#ifndef SecobMod__BG_FIX
 	//=============================================================================
 	// HPE_BEGIN:
 	// [Forrest] Replace strange hard-coded default message with hard-coded error message.
 	//=============================================================================
-	V_strcpy_safe( m_szTitle, "Error loading info message." );
-	V_strcpy_safe( m_szMessage, "" );
-	V_strcpy_safe( m_szMessageFallback, "" );
+	Q_strcpy( m_szTitle, "Error loading info message." );
+	Q_strcpy( m_szMessage, "" );
+	Q_strcpy( m_szMessageFallback, "" );
 	//=============================================================================
 	// HPE_END
 	//=============================================================================
@@ -150,6 +151,7 @@ void CTextWindow::Reset( void )
 	m_bShownURL = false;
 	m_bUnloadOnDismissal = false;
 	Update();
+#endif //SecobMod__BG_FIX
 }
 
 void CTextWindow::ShowText( const char *text )

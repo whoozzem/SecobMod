@@ -83,7 +83,11 @@ CHudPosture::CHudPosture( const char *pElementName ) : CHudElement( pElementName
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 
-	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
+	#ifdef  SecobMod__HAS_POSTURE_INDICATOR_REGARDLESS_OF_SUIT
+		SetHiddenBits( HIDEHUD_PLAYERDEAD );
+	#else
+		SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
+	#endif //SecobMod__HAS_POSTURE_INDICATOR_REGARDLESS_OF_SUIT
 
 	if( IsX360() )
 	{

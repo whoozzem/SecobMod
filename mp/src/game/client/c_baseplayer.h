@@ -83,6 +83,14 @@ public:
 	virtual void	SharedSpawn(); // Shared between client and server.
 	virtual bool	GetSteamID( CSteamID *pID );
 
+#ifdef SecobMod__ALLOW_PLAYER_MODELS_IN_VEHICLES
+	virtual const Vector &GetRenderOrigin();
+#endif //SecobMod__ALLOW_PLAYER_MODELS_IN_VEHICLES
+
+#ifdef SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS
+	int m_iClientClass;
+#endif //SecobMod__ENABLE_NIGHTVISION_FOR_HEAVY_CLASS
+	
 	// IClientEntity overrides.
 	virtual void	OnPreDataChanged( DataUpdateType_t updateType );
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
@@ -251,6 +259,12 @@ public:
 
 	virtual void				ItemPreFrame( void );
 	virtual void				ItemPostFrame( void );
+	
+	#ifdef SecobMod__USE_PLAYERCLASSES
+		float GetJumpHeight();
+		CNetworkVar( float, m_iJumpHeight );
+	#endif //SecobMod__USE_PLAYERCLASSES
+	
 	virtual void				AbortReload( void );
 
 	virtual void				SelectLastItem(void);

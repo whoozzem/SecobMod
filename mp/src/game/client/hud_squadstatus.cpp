@@ -74,7 +74,11 @@ CHudSquadStatus::CHudSquadStatus( const char *pElementName ) : CHudElement( pEle
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 
-	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
+	#ifdef SecobMod__HAS_SQUAD_INDICATOR_REGARDLESS_OF_SUIT
+		SetHiddenBits( HIDEHUD_PLAYERDEAD );
+	#else
+		SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
+	#endif //SecobMod__HAS_POSTURE_INDICATOR_REGARDLESS_OF_SUIT
 }
 
 //-----------------------------------------------------------------------------

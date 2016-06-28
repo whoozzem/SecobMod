@@ -268,6 +268,8 @@ public:
 	virtual void AlertSound( void );
 	virtual void ImpactSound( void );
 	virtual void TelegraphSound( void );
+	
+//SecobMod__IFDEF_Fixes
 #if HL2_EPISODIC
 	virtual bool FInViewCone( CBaseEntity *pEntity );
 #endif

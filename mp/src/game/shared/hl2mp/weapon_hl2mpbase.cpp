@@ -119,7 +119,8 @@ void CWeaponHL2MPBase::WeaponSound( WeaponSound_t sound_type, float soundtime /*
 		if ( !te->CanPredict() )
 			return;
 				
-		CBaseEntity::EmitSound( filter, GetPlayerOwner()->entindex(), shootsound, &GetPlayerOwner()->GetAbsOrigin() ); 
+		//SecobMod__Information: This crashed due to it being set to GetPlayerOwner which is singleplayer only.
+		CBaseEntity::EmitSound( filter, GetHL2MPPlayerOwner()->entindex(), shootsound, &GetHL2MPPlayerOwner()->GetAbsOrigin() ); 
 #else
 		BaseClass::WeaponSound( sound_type, soundtime );
 #endif

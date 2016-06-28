@@ -18,6 +18,8 @@
 class CNPC_CombineS : public CNPC_Combine
 {
 	DECLARE_CLASS( CNPC_CombineS, CNPC_Combine );
+	
+//SecobMod__IFDEF_Fixes	
 #if HL2_EPISODIC
 	DECLARE_DATADESC();
 #endif

@@ -187,7 +187,8 @@ void CBaseGrenade::Explode( trace_t *pTrace, int bitsDamageType )
 	AddEffects( EF_NODRAW );
 	SetAbsVelocity( vec3_origin );
 
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 	// Because the grenade is zipped out of the world instantly, the EXPLOSION sound that it makes for
 	// the AI is also immediately destroyed. For this reason, we now make the grenade entity inert and
 	// throw it away in 1/10th of a second instead of right away. Removing the grenade instantly causes

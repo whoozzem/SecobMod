@@ -33,6 +33,104 @@ extern ConVar in_forceuser;
 #define VIEWMODEL_ANIMATION_PARITY_BITS 3
 #define SCREEN_OVERLAY_MATERIAL "vgui/screens/vgui_overlay"
 
+#ifdef SecobMod__IRONSIGHT_ENABLED
+	#if defined( CLIENT_DLL )
+	void ExpWpnTestOffset(ConVar *pConVar, char *pszString);
+	ConVar   cl_exp_test_wpn_offset("cl_exp_test_wpn_offset", "0", 0, "Tests weapon offsets",
+	      (FnChangeCallback_t)ExpWpnTestOffset);
+	 
+	ConVar   cl_exp_test_wpn_offset_x("cl_exp_test_wpn_offset_x", "0");
+	ConVar   cl_exp_test_wpn_offset_y("cl_exp_test_wpn_offset_y", "0");
+	ConVar   cl_exp_test_wpn_offset_z("cl_exp_test_wpn_offset_z", "0");
+	 
+	ConVar   cl_exp_test_wpn_ori_offset_x("cl_exp_test_wpn_ori_offset_x", "0");
+	ConVar   cl_exp_test_wpn_ori_offset_y("cl_exp_test_wpn_ori_offset_y", "0");
+	ConVar   cl_exp_test_wpn_ori_offset_z("cl_exp_test_wpn_ori_offset_z", "0");
+	 
+	// cin: 070105 - applies existing weapon offsets when
+	// entering test mode (this will not be called upon
+	// weapon change, so beware)
+	// this mode should only be used for calibrating the
+	// ironsighted mode offests for a particular weapon
+	void ExpWpnTestOffset(ConVar *pConVar, char *pszString)
+	{
+	   CBasePlayer *pPlayer = UTIL_PlayerByIndex(engine->GetLocalPlayer());
+	   if (pPlayer)
+	   {
+	      CWeaponHL2MPBase *pWeapon  = dynamic_cast<CWeaponHL2MPBase *>(pPlayer->GetActiveWeapon());
+	      if (pWeapon)
+	      {
+	         cl_exp_test_wpn_offset_x.SetValue(pWeapon->GetHL2MPWpnData().m_expOffset.x);
+	         cl_exp_test_wpn_offset_y.SetValue(pWeapon->GetHL2MPWpnData().m_expOffset.y);
+	         cl_exp_test_wpn_offset_z.SetValue(pWeapon->GetHL2MPWpnData().m_expOffset.z);
+	 
+	         cl_exp_test_wpn_ori_offset_x.SetValue(pWeapon->GetHL2MPWpnData().m_expOriOffset.x);
+	         cl_exp_test_wpn_ori_offset_y.SetValue(pWeapon->GetHL2MPWpnData().m_expOriOffset.y);
+	         cl_exp_test_wpn_ori_offset_z.SetValue(pWeapon->GetHL2MPWpnData().m_expOriOffset.z);
+	      }
+	   }
+	}
+	 
+	 
+	// last time ironsighted mode was toggled
+	float gIronsightedTime(0.0f);
+	
+	float gMoveTime(0.1f); //SecobMod__Information: Seconds to use to move the model up to players view
+	 
+	// I bound this to a key for testing(i.e. bind [ ironsight_toggle)
+	CON_COMMAND(ironsight_toggle, "toggles ironsight mode for the current weapon")
+	{
+	   if (gpGlobals->curtime - gIronsightedTime < 0.5f)
+	      return;
+	 
+	   CBasePlayer *pPlayer = UTIL_PlayerByIndex(engine->GetLocalPlayer());
+	   if (pPlayer)
+	   {
+	     C_BaseViewModel  *pVm = pPlayer->GetViewModel();
+	      if (pVm)
+	      {
+	         pVm->m_bExpSighted  ^= true;
+	         gIronsightedTime     = gpGlobals->curtime;
+	      }
+	   }
+	}
+	 
+	void CalcExpWpnOffsets(CBasePlayer *owner, Vector &pos, QAngle &ang)
+	{
+	   Vector   forward, right, up, offset;
+	 
+	   // this is a simple test mode to help determine the proper values
+	   // to place in the weapon script
+	   if (cl_exp_test_wpn_offset.GetBool())
+	   {
+	      ang.x      += cl_exp_test_wpn_ori_offset_x.GetFloat();
+	      ang.y      += cl_exp_test_wpn_ori_offset_y.GetFloat();
+	      ang.z      += cl_exp_test_wpn_ori_offset_z.GetFloat();
+	      offset.Init(cl_exp_test_wpn_offset_x.GetFloat(),
+	                  cl_exp_test_wpn_offset_y.GetFloat(),
+	                  cl_exp_test_wpn_offset_z.GetFloat());
+	   }
+	   else
+	   {
+	      CWeaponHL2MPBase *pWeapon  = dynamic_cast<CWeaponHL2MPBase *>(ToHL2MPPlayer(owner)->GetActiveWeapon());
+	      if (pWeapon)
+	      {
+	         ang        += pWeapon->GetHL2MPWpnData().m_expOriOffset;
+	         offset      = pWeapon->GetHL2MPWpnData().m_expOffset;
+	      }
+	   }
+	 
+	   // get eye direction angles
+	   AngleVectors(ang, &forward, &right, &up);
+	 
+	   // apply the offsets
+	   pos        += forward   * offset.x;
+	   pos        += right     * offset.y;
+	   pos        += up        * offset.z;
+	}
+	#endif
+#endif //SecobMod__IRONSIGHT_ENABLED
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -84,6 +182,14 @@ void CBaseViewModel::Spawn( void )
 	Precache( );
 	SetSize( Vector( -8, -4, -2), Vector(8, 4, 2) );
 	SetSolid( SOLID_NONE );
+	
+#ifdef SecobMod__IRONSIGHT_ENABLED
+	#ifdef CLIENT_DLL
+		m_bExpSighted  = false;
+		m_expFactor    = 0.0f;
+		gIronsightedTime = 0.0f; 
+	#endif
+#endif //SecobMod__IRONSIGHT_ENABLED
 }
 
 
@@ -382,6 +488,52 @@ void CBaseViewModel::SendViewModelMatchingSequence( int sequence )
 #include "ivieweffects.h"
 #endif
 
+#ifdef SecobMod__IRONSIGHT_ENABLED
+void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles )
+{
+   // UNDONE: Calc this on the server?  Disabled for now as it seems unnecessary to have this info on the server
+#if defined( CLIENT_DLL )
+   QAngle vmangoriginal = eyeAngles;
+   QAngle vmangles = eyeAngles;
+   Vector vmorigin = eyePosition;
+ 
+   CBaseCombatWeapon *pWeapon = m_hWeapon.Get();
+   //Allow weapon lagging
+   if ( pWeapon != NULL )
+   {
+#if defined( CLIENT_DLL )
+      if ( !prediction->InPrediction() )
+#endif
+      {
+         pWeapon->AddViewmodelBob( this, vmorigin, vmangles );
+         CalcViewModelLag( vmorigin, vmangles, vmangoriginal );
+      }
+   }
+ 
+#if defined( CLIENT_DLL )
+   if ( !prediction->InPrediction() )
+   {
+      // Let the viewmodel shake at about 10% of the amplitude of the player's view
+      vieweffects->ApplyShake( vmorigin, vmangles, 0.1 );   
+   }
+#endif
+   // cin: 070105 - ironsighted mode changes
+   // get the wpn offsets
+   CalcExpWpnOffsets(owner, vmorigin, vmangles);
+ 
+   // get delta time for 1 sec interpolation and interpolate to/from positional offset
+   float delta((gpGlobals->curtime - gIronsightedTime) / gMoveTime);
+   m_expFactor = (m_bExpSighted) ? 
+         (delta > 1.0f) ? 1.0f : delta :
+         (delta > 1.0f) ? 0.0f : 1.0f - delta;
+   Vector difPos(vmorigin - eyePosition);
+   vmorigin = eyePosition + (difPos * m_expFactor);
+ 
+   SetLocalOrigin(vmorigin);
+   SetLocalAngles(vmangles);
+#endif
+}
+#else //SecobMod__IRONSIGHT_ENABLED
 void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePosition, const QAngle& eyeAngles )
 {
 	// UNDONE: Calc this on the server?  Disabled for now as it seems unnecessary to have this info on the server
@@ -458,6 +610,7 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 #endif
 
 }
+#endif //SecobMod__IRONSIGHT_ENABLED
 
 //-----------------------------------------------------------------------------
 // Purpose: 

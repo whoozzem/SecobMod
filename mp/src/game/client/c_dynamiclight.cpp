@@ -14,8 +14,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-
-#if HL2_EPISODIC
+//SecobMod__IFDEF_Fixes
+#ifdef HL2_EPISODIC
 // In Episodic we unify the NO_WORLD_ILLUMINATION lights to use 
 // the more efficient elight structure instead. This should theoretically
 // be extended to other projects but may have unintended consequences
