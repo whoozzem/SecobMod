@@ -1,0 +1,65 @@
+2026:
+I am deleting old SourceSDK files from my Google Drive, so am uploading the original file. Unfortunately it was too large for the maximimum upload amount, so used 7zip to split it.
+
+2020:
+
+NOTE: I have always been honest about my lack of coding skill, and since the last release this skill has not got much better as my programming tends to be visual scripting these days.
+
+I have always maintained that SecobMod be treated more of a working example for how the code functions and to port what you need out of it into your own project.
+
+This is not to say you shouldn't just use SecobMod as is, in fact this current release against the SDK is proving very stable - but I still need to throw this warning out there to avoid dissapointment.
+
+
+ This patch was created against the 10th September 2015 release of the Source SDK.
+
+Should there ever be any updates to the original Source SDK 2013, then the following download is the correct commit to apply this patch against:
+
+https://github.com/ValveSoftware/source-sdk-2013/tree/0d8dceea4310fde5706b3ce1c70609d72a38efdf
+
+Apply the patch against a fresh zip extraction of the Source SDK, and apply it against the "source-sdk-2013-master" folder (which should contain the mp,sp folders and .gitattributes, .gitignore, etc. files.
+
+The main changes are:
+
+1) Transitions now use relative paths again as they did in 2007/9 so end users are no longer forced to install to the Steam Library in C:\Program Files.
+
+2) Chat Bubbles are now displayed correctly as they're no longer based on the players camera angle.
+
+3) You can now follow the Source SDK 2013 installation steps:
+
+https://developer.valvesoftware.com/wiki/Source_SDK_2013
+
+4) secobmod.fgd for use with Hammer is now included as a file for you to copy to the required directory.
+
+5) This release while improved upon compared to the last SecobMod release still has the following bugs that you should be made aware of and perhaps you may like to fix....
+
+The PANEL_INFO (Text Window) which is used for MOTD and Briefings has an invalid texture for its background applied somewhere in the engine with an awful to look at a pink and black checkerboard texture.
+//*
+The vehicle in ep2 maps is locked on spawn which stops AI (e.g. Alyx) from entering it. If forced into it the AI will remain standing attached to the vehicle. Not that SecobMod was ever designed to play co-op singleplayer maps, but most work quite well.
+
+The player in a vehicle is also now standing up, originally they were put into a sitting animation so not sure why this has happened.
+
+
+Weapon strip/dissolve zones (as used to make the Super Gravity Gun in HL2/EP1 -e.g. d3_citadel_03) don't work. The hl2_triggers.cpp file has been modified to get this SEMI-working, downside is they're currently left with just a normal gravity gun. The problem is that it doesn't throw the HL2MP gravity gun on drop, it deletes it from the game and hangs because it can never find a gravity gun. A forced spawn of a gravity gun after other weapons have been dissolved is the temp. fix.
+
+
+
+
+Armour not working on non-playerclass save/restore transitions. This should work according to the code! This may be fixed now as I have overhauled the save/restore code. However if you notice problems then it will all be on the restore side of the code.
+
+One bug I have noticed is the game adds a new hud display reading "0" for some reason. Also switching weapons after a restore has been known to increase your ammo for an unknown reason - further investigation by your teams' coder may be required!
+
+Leaving tilted vehicles causes players to appear tilted as well. This affects only their player model, their actual views are normal. This is hard to reproduce all the time which makes fixing it that much harder.
+
+
+Super Gravity Gun - Some particle effects are missing, but the gun itself works as in singleplayer.
+
+
+Blood splashes being emitted when shooting other players despite no damage actually being dealt, also affects AI that can take damage but take none from the player.
+// (only applicable when "SecobMod__FRIENDLY_FIRE_ENABLED" is disabled, at least for players).
+
+AI bend their legs when going up in lifts (elevators), and hover slightly in the air going down.
+
+
+You can rapidly fire the crossbow, presumably the same fix for this the shotgun has can be implemented.
+
+The RPG weapons' red dot sprite shows without alphas for the laser pointer dot.
